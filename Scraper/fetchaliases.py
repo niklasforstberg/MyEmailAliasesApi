@@ -39,7 +39,8 @@ class OneDotComClient:
         # Check if we got the 2FA page
         if "Google Authenticator" in response.text:
             totp_data = {
-                'otp': totp_code
+                'otp': totp_code,
+                'login': 'Log In'
             }
             
             response = self.session.post(
@@ -47,8 +48,9 @@ class OneDotComClient:
                 data=totp_data,
                 allow_redirects=True
             )
+            
 
-        return response.ok
+        return 'admin' in response.url
 
     def get_aliases(self):
         """
