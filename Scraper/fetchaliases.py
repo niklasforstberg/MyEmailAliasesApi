@@ -184,13 +184,32 @@ def login():
     
     return None
 
+def process_mail_data():
+    """Process the mail data from the cached JSON file"""
+    print("\nProcessing cached mail data...")
+    with open('tmp/mail_data.json', 'r') as f:
+        data = json.load(f)
+    
+    # TODO: Process data and store in database
+    # For now, just show how many aliases we found
+    aliases = [addr for addr in data['result']['addresses'] 
+              if addr['type'] == 'ALIAS']
+    print(f"Found {len(aliases)} aliases")
+    return True
+
 def main():
     try:
-        session = login()
-        if session:
-            # Here you can add the code to fetch aliases
-            pass
-            
+        # Check if we have cached data
+        if os.path.exists('tmp/mail_data.json'):
+            process_mail_data()
+        else:
+            print("No cached data found, logging in...")
+            session = login()
+            if session:
+                print("Login successful!")
+            else:
+                print("Login failed!")
+                
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")
 
