@@ -141,20 +141,37 @@ def login():
             print(json.dumps(dict(totp_response.headers), indent=2))
             
             if totp_response.status_code == 302:
-                # Go directly to the mail overview page
+                # Step 1: Go directly to mail overview
                 mail_url = "https://www.one.com/admin/mail/overview.do"
+                session.headers.update({
+                    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+                    'Upgrade-Insecure-Requests': '1'
+                })
+                
                 mail_response = session.get(mail_url)
                 print(f"\nMail Overview Response Status: {mail_response.status_code}")
-                print(f"Mail Overview URL: {mail_response.url}")
                 
-                with open('tmp/mail_overview.html', 'w', encoding='utf-8') as f:
-                    f.write(mail_response.text)
+                # Step 2: Make the API request with proper headers
+                domain = os.getenv('ONE_COM_DOMAIN')  # Add this to your .env file
+                api_url = f"https://www.one.com/admin/api/domains/{domain}/mail/overview"
                 
-                if mail_response.status_code == 200:
-                    print("\nSuccessfully accessed mail overview!")
+                session.headers.update({
+                    'Accept': 'application/json, text/plain, */*',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Referer': 'https://www.one.com/admin/mail/overview.do',
+                    'Content-Type': 'application/json'
+                })
+                
+                api_response = session.get(api_url)
+                print(f"\nAPI Response Status: {api_response.status_code}")
+                print(f"API Response: {api_response.text}")
+                
+                with open('tmp/mail_data.json', 'w', encoding='utf-8') as f:
+                    f.write(api_response.text)
+                
+                if api_response.status_code == 200:
+                    print("\nSuccessfully fetched mail data!")
                     return session
-                else:
-                    print(f"\nFailed to access mail overview: {mail_response.status_code}")
         else:
             print("\nNo 2FA form found - checking if login succeeded...")
             if 'admin' in response.url:
