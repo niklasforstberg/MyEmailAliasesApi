@@ -1,0 +1,10 @@
+namespace EmailAliasApi.Models;
+
+public class EmailForwarding
+{
+    public int Id { get; set; }
+    public string ForwardingAddress { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public int EmailAliasId { get; set; }
+    public EmailAlias EmailAlias { get; set; } = null!;
+} 
