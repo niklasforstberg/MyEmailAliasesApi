@@ -1,17 +1,82 @@
 using EmailAliasApi.Data;
 using EmailAliasApi.Endpoints;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.OpenApi.Models;
+using System.Text.Json;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "ChoresApp API", Version = "v1" });
+
+    // Add JWT Authentication
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
+        };
+
+        // Add this section for detailed error messages
+        options.Events = new JwtBearerEvents
+        {
+            OnChallenge = context =>
+            {
+                context.HandleResponse();
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                context.Response.ContentType = "application/json";
+
+                // Only use this for debugging. Remove in production!
+                var result = JsonSerializer.Serialize("401 Error: " + context.Error + " - " + context.ErrorDescription);
+                return context.Response.WriteAsync(result);
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
+
 // Add DB context
 builder.Services.AddDbContext<EmailAliasDbContext>(options =>
-    options.UseSqlServer("Server=10.0.0.201;Database=EmailAliasDb;Trusted_Connection=True;TrustServerCertificate=True;"));
+    options.UseSqlServer("Server=10.0.0.201;Database=EmailAliasDb;User Id=sa;Password=Reconfirm5,karavAn,avsta;TrustServerCertificate=True;"));
 
 var app = builder.Build();
 
@@ -24,7 +89,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 // Map all endpoints
 app.MapAliasEndpoints();
+app.MapAuthEndpoints();
 
 app.Run();
