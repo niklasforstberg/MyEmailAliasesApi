@@ -196,7 +196,7 @@ def process_mail_data():
     
     try:
         # Load domain and user id from environment variables
-        load_dotenv()
+        load_dotenv('.env.setup')  # or whatever filename you prefer
         domain = os.getenv('ONE_COM_DOMAIN')
         user_id = os.getenv('USER_ID')
         if not domain or not user_id:
