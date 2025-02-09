@@ -258,22 +258,25 @@ def process_mail_data():
                             # Update existing alias
                             conn.execute(text("""
                                 UPDATE EmailAliases 
-                                SET LastUpdated = GETDATE()
+                                SET LastUpdated = GETDATE(),
+                                    Status = :status
                                 WHERE Id = :id
                             """), {
-                                "id": existing_id
+                                "id": existing_id,
+                                "status": alias.get('mailAddressStatus', '')
                             })
                             alias_id = existing_id
                         else:
                             # Insert new alias
                             result = conn.execute(text("""
                                 INSERT INTO EmailAliases 
-                                (AliasAddress, UserId, CreatedAt, LastUpdated)
+                                (AliasAddress, UserId, CreatedAt, LastUpdated, Status)
                                 OUTPUT INSERTED.Id
-                                VALUES (:alias_address, :user_id, GETDATE(), GETDATE())
+                                VALUES (:alias_address, :user_id, GETDATE(), GETDATE(), :status)
                             """), {
                                 "alias_address": alias_name,
-                                "user_id": user_id
+                                "user_id": user_id,
+                                "status": alias.get('mailAddressStatus', '')
                             })
                             alias_id = result.scalar()
                         
@@ -290,16 +293,14 @@ def process_mail_data():
                         for fwd in alias['forwards']:
                             if 'address' in fwd:
                                 forward_address = fwd['address']
-                                forward_status = alias.get('mailAddressStatus', '')
-                                print(f"  → {forward_address} (Status: {forward_status})")
+                                print(f"  → {forward_address}")
                                 
                                 conn.execute(text("""
                                     INSERT INTO EmailForwardings 
-                                    (ForwardingAddress, Status, EmailAliasId)
-                                    VALUES (:forward_address, :status, :alias_id)
+                                    (ForwardingAddress, EmailAliasId)
+                                    VALUES (:forward_address, :alias_id)
                                 """), {
                                     "forward_address": forward_address,
-                                    "status": forward_status,
                                     "alias_id": alias_id
                                 })
                         
