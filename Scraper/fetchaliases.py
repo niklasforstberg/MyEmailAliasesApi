@@ -4,6 +4,12 @@ import os
 from dotenv import load_dotenv
 import re
 import json
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+import datetime
+import pyodbc
+from sqlalchemy import text
+from urllib.parse import quote_plus
 
 def login():
     # Load environment variables
@@ -185,17 +191,135 @@ def login():
     return None
 
 def process_mail_data():
-    """Process the mail data from the cached JSON file"""
+    """Process the mail data from the cached JSON file and store in database"""
     print("\nProcessing cached mail data...")
-    with open('tmp/mail_data.json', 'r') as f:
-        data = json.load(f)
     
-    # TODO: Process data and store in database
-    # For now, just show how many aliases we found
-    aliases = [addr for addr in data['result']['addresses'] 
-              if addr['type'] == 'ALIAS']
-    print(f"Found {len(aliases)} aliases")
-    return True
+    try:
+        # Load domain and user id from environment variables
+        load_dotenv()
+        domain = os.getenv('ONE_COM_DOMAIN')
+        user_id = os.getenv('USER_ID')
+        if not domain or not user_id:
+            print("Error: ONE_COM_DOMAIN or USER_ID not found in .env file")
+            return False
+
+        # Read the cached JSON file
+        with open('tmp/mail_data.json', 'r') as file:
+            data = json.load(file)
+        
+        # Access the aliases list from the JSON structure
+        if 'result' in data and 'addresses' in data['result']:
+            addresses = data['result']['addresses']
+            print(f"\nFound {len(addresses)} email addresses:")
+            print("-" * 50)
+            
+            # Print non-alias addresses
+            non_aliases = [addr for addr in addresses if addr.get('type') != 'ALIAS']
+            if non_aliases:
+                print("\nSkipping the following non-alias addresses:")
+                for addr in non_aliases:
+                    print(f"- {addr.get('name')}@{domain} (type: {addr.get('type')})")
+                print("-" * 50)
+            
+            # Filter only ALIAS type addresses
+            aliases = [addr for addr in addresses if addr.get('type') == 'ALIAS']
+            print(f"\nProcessing {len(aliases)} aliases:")
+            
+            # Create database connection
+            connection_string = (
+                "Driver={ODBC Driver 18 for SQL Server};"
+                "Server=10.0.0.201;"
+                "Database=EmailAliasDb;"
+                "UID=sa;"
+                "PWD=Reconfirm5,karavAn,avsta;"
+                "Encrypt=no;"
+            )
+            engine = create_engine(f"mssql+pyodbc://?odbc_connect={quote_plus(connection_string)}")
+            
+            with engine.connect() as conn:
+                for alias in aliases:
+                    if 'name' in alias and 'forwards' in alias:
+                        alias_name = f"{alias['name']}@{domain}"
+                        mail_status = alias.get('mailAddressStatus', '')
+                        
+                        print(f"\nAlias: {alias_name}")
+                        print(f"Status: {mail_status}")
+                        
+                        # Check if alias exists
+                        result = conn.execute(text("""
+                            SELECT Id FROM EmailAliases 
+                            WHERE AliasAddress = :alias_address
+                        """), {
+                            "alias_address": alias_name
+                        })
+                        existing_id = result.scalar()
+                        
+                        if existing_id:
+                            # Update existing alias
+                            conn.execute(text("""
+                                UPDATE EmailAliases 
+                                SET LastUpdated = GETDATE()
+                                WHERE Id = :id
+                            """), {
+                                "id": existing_id
+                            })
+                            alias_id = existing_id
+                        else:
+                            # Insert new alias
+                            result = conn.execute(text("""
+                                INSERT INTO EmailAliases 
+                                (AliasAddress, UserId, CreatedAt, LastUpdated)
+                                OUTPUT INSERTED.Id
+                                VALUES (:alias_address, :user_id, GETDATE(), GETDATE())
+                            """), {
+                                "alias_address": alias_name,
+                                "user_id": user_id
+                            })
+                            alias_id = result.scalar()
+                        
+                        # Delete existing forwarding addresses
+                        conn.execute(text("""
+                            DELETE FROM EmailForwardings 
+                            WHERE EmailAliasId = :alias_id
+                        """), {
+                            "alias_id": alias_id
+                        })
+                        
+                        # Insert new forwarding addresses
+                        print("Forwards to:")
+                        for fwd in alias['forwards']:
+                            if 'address' in fwd:
+                                forward_address = fwd['address']
+                                forward_status = alias.get('mailAddressStatus', '')
+                                print(f"  → {forward_address} (Status: {forward_status})")
+                                
+                                conn.execute(text("""
+                                    INSERT INTO EmailForwardings 
+                                    (ForwardingAddress, Status, EmailAliasId)
+                                    VALUES (:forward_address, :status, :alias_id)
+                                """), {
+                                    "forward_address": forward_address,
+                                    "status": forward_status,
+                                    "alias_id": alias_id
+                                })
+                        
+                        print("-" * 50)
+                
+                conn.commit()
+                print("\nDatabase updated successfully")
+                return True
+        else:
+            print("Error: Unexpected JSON structure")
+            return False
+                
+    except Exception as e:
+        print(f"\nDetailed error: {str(e)}")
+        print(f"Error type: {type(e)}")
+        import traceback
+        print("\nFull traceback:")
+        print(traceback.format_exc())
+    
+    return False
 
 def main():
     try:
