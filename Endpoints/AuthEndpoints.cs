@@ -7,6 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace EmailAliasApi.Endpoints;
 
@@ -89,25 +90,48 @@ public static class AuthEndpoints
             return Results.Ok(new { Token = $"Bearer {token}" });
         });
 
-        group.MapGet("/me", async (HttpContext context, EmailAliasDbContext db) =>
+        group.MapGet("/me", async (HttpContext context, EmailAliasDbContext db, ILogger<Program> logger) =>
         {
-            var userId = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (userId == null)
-                return Results.Unauthorized();
+            var userIdString = context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            logger.LogInformation("User ID from claim: {UserId}", userIdString);
 
-            var user = await db.Users
-                .FirstOrDefaultAsync(u => u.Id == int.Parse(userId));
-
-            if (user == null)
-                return Results.NotFound();
-
-            return Results.Ok(new
+            if (userIdString == null || !int.TryParse(userIdString, out int userId))
             {
-                user.Id,
-                user.Email,
-                user.Username,
-                user.Role
-            });
+                logger.LogWarning("Failed to parse user ID: {UserId}", userIdString);
+                return Results.Unauthorized();
+            }
+
+            logger.LogInformation("Parsed User ID: {UserId}", userId);
+
+            try 
+            {
+                var user = await db.Users
+                    .AsNoTracking()
+                    .Where(u => u.Id == userId)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        Email = u.Email,
+                        Username = u.Username,
+                        Role = u.Role.ToString()
+                    })
+                    .FirstOrDefaultAsync();
+                
+                logger.LogInformation("Retrieved user: {User}", user);
+
+                if (user == null)
+                {
+                    logger.LogWarning("User not found for ID: {UserId}", userId);
+                    return Results.NotFound();
+                }
+
+                return Results.Ok(user);
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, "Error retrieving user with ID: {UserId}", userId);
+                throw;
+            }
         }).RequireAuthorization();
     }
 

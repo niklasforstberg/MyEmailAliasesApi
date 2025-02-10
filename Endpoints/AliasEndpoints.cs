@@ -2,6 +2,7 @@ using EmailAliasApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using EmailAliasApi.Models;
 
 namespace EmailAliasApi.Endpoints;
 
@@ -16,7 +17,8 @@ public static class AliasEndpoints
 
         app.MapGet("/users/{userId}/aliases", GetUserAliases)
             .WithName("GetUserAliases")
-            .WithOpenApi();
+            .WithOpenApi()
+            .RequireAuthorization(policy => policy.RequireClaim(ClaimTypes.Role, User.UserRole.ADMIN.ToString()));
 
         app.MapGet("/aliases/{aliasId}", GetAuthenticatedUserAlias)
             .WithName("GetAuthenticatedUserAlias")

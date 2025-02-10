@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MyEmailAliasesApi.Migrations
 {
     [DbContext(typeof(EmailAliasDbContext))]
-    [Migration("20250209180317_movedStatusToEmailAlias")]
-    partial class movedStatusToEmailAlias
+    [Migration("20250210161102_NewFirst")]
+    partial class NewFirst
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -95,9 +95,8 @@ namespace MyEmailAliasesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.Property<string>("Username")
                         .IsRequired()
