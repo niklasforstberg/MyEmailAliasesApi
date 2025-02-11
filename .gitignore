@@ -126,3 +126,6 @@ bld/
 #project files
 Scraper/tmp/mail_data.json
 tmp/
+
+#dev token
+devtoken.txt
