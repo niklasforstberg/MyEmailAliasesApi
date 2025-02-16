@@ -97,7 +97,13 @@ builder.Services.AddAuthorization(options =>
 
 // Add DB context
 builder.Services.AddDbContext<EmailAliasDbContext>(options =>
-    options.UseSqlServer(builder.Configuration["ConnectionStrings:DefaultConnection"]));
+{
+    var baseConnectionString = "Server=10.0.0.201;User Id=sa;TrustServerCertificate=True";
+    var database = builder.Configuration["ConnectionStrings:Database"];
+    var password = builder.Configuration["ConnectionStrings:Password"];
+    var connectionString = $"{baseConnectionString};Database={database};Password={password}";
+    options.UseSqlServer(connectionString);
+});
 
 var app = builder.Build();
 
