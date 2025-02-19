@@ -52,7 +52,10 @@ builder.Services.AddSwaggerGen(c =>
                 {
                     Type = ReferenceType.SecurityScheme,
                     Id = "Bearer"
-                }
+                },
+                Scheme = "http",
+                Name = "Bearer",
+                In = ParameterLocation.Header
             },
             new string[] {}
         }
@@ -108,14 +111,15 @@ builder.Services.AddDbContext<EmailAliasDbContext>(options =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+app.UseSwagger(c => 
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-// Add UseHttpsRedirection before CORS
-// app.UseHttpsRedirection();
+    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+    {
+        // Force Swagger to use HTTP
+        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"http://{httpReq.Host.Value}" } };
+    });
+});
+app.UseSwaggerUI();
 
 // Enable CORS
 app.UseCors("AllowLocalhost");
