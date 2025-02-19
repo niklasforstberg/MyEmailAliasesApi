@@ -115,7 +115,7 @@ if (app.Environment.IsDevelopment())
 }
 
 // Add UseHttpsRedirection before CORS
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // Enable CORS
 app.UseCors("AllowLocalhost");

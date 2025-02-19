@@ -129,3 +129,5 @@ tmp/
 
 #dev token
 devtoken.txt
+env.list
+docker-compose.yaml
