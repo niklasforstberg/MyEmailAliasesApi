@@ -324,17 +324,16 @@ def process_mail_data():
 
 def main():
     try:
-        # Check if we have cached data
+        print("No cached data found, logging in...")
+        session = login()
+        if session:
+            print("Login successful!")
+        else:
+            print("Login failed!")
+
         if os.path.exists('tmp/mail_data.json'):
             process_mail_data()
-        else:
-            print("No cached data found, logging in...")
-            session = login()
-            if session:
-                print("Login successful!")
-            else:
-                print("Login failed!")
-                
+
     except Exception as e:
         print(f"\nAn error occurred: {str(e)}")
 
