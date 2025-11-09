@@ -89,6 +89,12 @@ node_modules/
 packages/
 *.nupkg
 
+# Vite / React build outputs
+dist/
+.vite/
+clientapp/dist/
+clientapp/.vite/
+
 # Logs and databases
 *.log
 *.sqlite

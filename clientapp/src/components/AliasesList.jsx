@@ -53,30 +53,10 @@ function AliasesList() {
           <p>No email aliases found.</p>
         </div>
       ) : (
-        <div className="aliases-grid">
+        <div className="aliases-list">
           {aliases.map((alias) => (
-            <div key={alias.id} className="alias-card">
-              <div className="alias-header">
-                <h3 className="alias-address">{alias.alias}</h3>
-                <span className={`status-badge status-${alias.status?.toLowerCase()}`}>
-                  {alias.status || 'Unknown'}
-                </span>
-              </div>
-              <div className="alias-details">
-                <p className="alias-date">
-                  Created: {new Date(alias.createdAt).toLocaleDateString()}
-                </p>
-                {alias.forwardingAddresses && alias.forwardingAddresses.length > 0 && (
-                  <div className="forwarding-addresses">
-                    <strong>Forwarding to:</strong>
-                    <ul>
-                      {alias.forwardingAddresses.map((forward) => (
-                        <li key={forward.id}>{forward.forwardingAddress}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
+            <div key={alias.id} className="alias-item">
+              {alias.alias}
             </div>
           ))}
         </div>
