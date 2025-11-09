@@ -102,6 +102,7 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddDbContext<EmailAliasDbContext>(options =>
 {
     var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+    Console.WriteLine("Connection string: " + connectionString);
     options.UseSqlServer(connectionString);
 });
 
