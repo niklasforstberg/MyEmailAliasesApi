@@ -6,6 +6,7 @@ function AliasesList() {
   const [aliases, setAliases] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
 
   useEffect(() => {
     fetchAliases()
@@ -41,6 +42,10 @@ function AliasesList() {
     )
   }
 
+  const filteredAliases = aliases.filter(alias =>
+    alias.alias.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
     <div className="aliases-container">
       <div className="aliases-header">
@@ -48,13 +53,21 @@ function AliasesList() {
         <button onClick={fetchAliases} className="refresh-btn">Refresh</button>
       </div>
       
-      {aliases.length === 0 ? (
+      <input
+        type="text"
+        className="search-input"
+        placeholder="Search aliases..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      
+      {filteredAliases.length === 0 ? (
         <div className="no-aliases">
-          <p>No email aliases found.</p>
+          <p>{searchTerm ? 'No aliases match your search.' : 'No email aliases found.'}</p>
         </div>
       ) : (
         <div className="aliases-list">
-          {aliases.map((alias) => (
+          {filteredAliases.map((alias) => (
             <div key={alias.id} className="alias-item">
               {alias.alias}
             </div>
