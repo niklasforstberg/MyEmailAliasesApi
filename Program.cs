@@ -19,7 +19,7 @@ builder.Services.AddCors(options =>
     {
         var originsString = builder.Configuration["ALLOWED_ORIGINS"] ?? "";
         var allowedOrigins = originsString.Split(',', StringSplitOptions.RemoveEmptyEntries);
-        
+
         policy.WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -101,17 +101,14 @@ builder.Services.AddAuthorization(options =>
 // Add DB context
 builder.Services.AddDbContext<EmailAliasDbContext>(options =>
 {
-    var baseConnectionString = "Server=10.0.0.201;User Id=sa;TrustServerCertificate=True";
-    var database = builder.Configuration["ConnectionStrings:Database"];
-    var password = builder.Configuration["ConnectionStrings:Password"];
-    var connectionString = $"{baseConnectionString};Database={database};Password={password}";
+    var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
     options.UseSqlServer(connectionString);
 });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.UseSwagger(c => 
+app.UseSwagger(c =>
 {
     c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
     {
@@ -127,8 +124,19 @@ app.UseCors("AllowLocalhost");
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map all endpoints
+// Map all API endpoints (must be before static files)
 app.MapAliasEndpoints();
 app.MapAuthEndpoints();
+
+// Serve static files from wwwroot (React app build output)
+// Only serve static files if wwwroot exists (for production)
+if (Directory.Exists("wwwroot"))
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+
+    // Fallback to index.html for SPA routing (must be last)
+    app.MapFallbackToFile("index.html");
+}
 
 app.Run();
