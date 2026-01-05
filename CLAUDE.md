@@ -60,6 +60,11 @@ Three tables: Users, EmailAliases, EmailForwardings with relationships:
 
 Required for .NET API:
 ```
+smtp:username = myemailalias@forstberg.com
+smtp:sslport = 2525
+smtp:server = mail-eu.smtp2go.com
+smtp:password = <your_secret_password>
+smtp:enablessl = false
 Jwt:Key=<your_secret_key>
 Jwt:Issuer=http://localhost
 Jwt:Audience=http://localhost
