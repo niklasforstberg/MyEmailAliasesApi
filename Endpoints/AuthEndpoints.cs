@@ -1,10 +1,12 @@
 using EmailAliasApi.Data;
 using EmailAliasApi.Models;
 using EmailAliasApi.Models.DTOs;
+using EmailAliasApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -48,6 +50,61 @@ public static class AuthEndpoints
 
             var token = GenerateJwtToken(user, config);
             return Results.Ok(new { Token = token });
+        });
+
+        group.MapPost("/forgot-password", async (ForgotPasswordRequest request, EmailAliasDbContext db, EmailService emailService, IConfiguration config) =>
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
+
+            // Don't reveal if email exists (security best practice)
+            if (user != null)
+            {
+                // Generate secure reset token
+                var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+                user.ResetToken = resetToken;
+                user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
+
+                await db.SaveChangesAsync();
+
+                // Build reset URL
+                var frontendUrl = config["FRONTEND_URL"] ?? "http://localhost:5173";
+                var resetUrl = $"{frontendUrl}/reset-password?token={Uri.EscapeDataString(resetToken)}";
+
+                try
+                {
+                    await emailService.SendPasswordResetEmail(user.Email, resetToken, resetUrl);
+                }
+                catch (Exception)
+                {
+                    // Log error but don't reveal failure to user
+                    // Token is already saved, so user can try again later
+                }
+            }
+
+            // Always return success to prevent email enumeration
+            return Results.Ok(new { Message = "If an account with that email exists, a password reset link has been sent." });
+        });
+
+        group.MapPost("/reset-password", async (ResetPasswordRequest request, EmailAliasDbContext db) =>
+        {
+            var user = await db.Users.FirstOrDefaultAsync(u =>
+                u.ResetToken == request.Token &&
+                u.ResetTokenExpiry.HasValue &&
+                u.ResetTokenExpiry.Value > DateTime.UtcNow);
+
+            if (user == null)
+            {
+                return Results.BadRequest("Invalid or expired reset token");
+            }
+
+            // Update password and clear reset token
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            user.ResetToken = null;
+            user.ResetTokenExpiry = null;
+
+            await db.SaveChangesAsync();
+
+            return Results.Ok(new { Message = "Password has been reset successfully" });
         });
 
         // Development-only endpoint for creating admin user
@@ -103,7 +160,7 @@ public static class AuthEndpoints
 
             logger.LogInformation("Parsed User ID: {UserId}", userId);
 
-            try 
+            try
             {
                 var user = await db.Users
                     .AsNoTracking()
@@ -116,7 +173,7 @@ public static class AuthEndpoints
                         Role = u.Role.ToString()
                     })
                     .FirstOrDefaultAsync();
-                
+
                 logger.LogInformation("Retrieved user: {User}", user);
 
                 if (user == null)
@@ -182,4 +239,4 @@ public static class AuthEndpoints
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
-} 
+}

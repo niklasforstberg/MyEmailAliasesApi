@@ -1,11 +1,27 @@
-import { useContext } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { AuthContext } from './context/AuthContext'
 import Login from './components/Login'
+import ForgotPassword from './components/ForgotPassword'
+import ResetPassword from './components/ResetPassword'
 import AliasesList from './components/AliasesList'
 import './App.css'
 
 function App() {
   const { isAuthenticated, loading } = useContext(AuthContext)
+  const [view, setView] = useState('login')
+  const [resetToken, setResetToken] = useState(null)
+
+  useEffect(() => {
+    // Check for reset token in URL query params
+    const params = new URLSearchParams(window.location.search)
+    const token = params.get('token')
+    if (token) {
+      setResetToken(token)
+      setView('resetPassword')
+      // Clean up URL
+      window.history.replaceState({}, document.title, window.location.pathname)
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -15,6 +31,18 @@ function App() {
         </div>
       </div>
     )
+  }
+
+  const renderAuthView = () => {
+    switch (view) {
+      case 'forgotPassword':
+        return <ForgotPassword onBackToLogin={() => setView('login')} />
+      case 'resetPassword':
+        return <ResetPassword token={resetToken} onSuccess={() => setView('login')} />
+      case 'login':
+      default:
+        return <Login onForgotPassword={() => setView('forgotPassword')} />
+    }
   }
 
   return (
@@ -34,7 +62,7 @@ function App() {
         )}
       </header>
       <main className="app-main">
-        {!isAuthenticated ? <Login /> : <AliasesList />}
+        {!isAuthenticated ? renderAuthView() : <AliasesList />}
       </main>
     </div>
   )

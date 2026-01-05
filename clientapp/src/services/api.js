@@ -61,6 +61,14 @@ const api = {
     })
     return handleResponse(response)
   },
+
+  forgotPassword: async (email) => {
+    return api.post('/auth/forgot-password', { email })
+  },
+
+  resetPassword: async (token, newPassword) => {
+    return api.post('/auth/reset-password', { token, newPassword })
+  },
 }
 
 export { api }

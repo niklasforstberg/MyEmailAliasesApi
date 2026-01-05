@@ -2,7 +2,7 @@ import { useState, useContext } from 'react'
 import { AuthContext } from '../context/AuthContext'
 import './Login.css'
 
-function Login() {
+function Login({ onForgotPassword }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -55,6 +55,24 @@ function Login() {
           <button type="submit" disabled={loading} className="submit-btn">
             {loading ? 'Logging in...' : 'Login'}
           </button>
+          {onForgotPassword && (
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button
+                type="button"
+                onClick={onForgotPassword}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#3498db',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                  fontSize: '0.9rem'
+                }}
+              >
+                Forgot Password?
+              </button>
+            </div>
+          )}
         </form>
       </div>
     </div>
