@@ -16,14 +16,15 @@ public class EmailAliasDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<EmailAlias>()
-            .HasOne(e => e.User)
-            .WithMany(u => u.EmailAliases)
-            .HasForeignKey(e => e.UserId);
-
         modelBuilder.Entity<EmailForwarding>()
             .HasOne(f => f.EmailAlias)
             .WithMany(e => e.ForwardingAddresses)
             .HasForeignKey(f => f.EmailAliasId);
+
+        modelBuilder.Entity<EmailForwarding>()
+            .HasOne(f => f.User)
+            .WithMany(u => u.ForwardingAddresses)
+            .HasForeignKey(f => f.UserId)
+            .OnDelete(DeleteBehavior.SetNull);
     }
 } 

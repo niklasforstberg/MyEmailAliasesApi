@@ -1,5 +1,6 @@
 using EmailAliasApi.Data;
 using EmailAliasApi.Endpoints;
+using EmailAliasApi.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -105,6 +106,9 @@ builder.Services.AddDbContext<EmailAliasDbContext>(options =>
     Console.WriteLine("Connection string: " + connectionString);
     options.UseSqlServer(connectionString);
 });
+
+// Add Email Service
+builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 

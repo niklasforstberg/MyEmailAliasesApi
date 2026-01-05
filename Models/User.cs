@@ -13,5 +13,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string PasswordHash { get; set; } = string.Empty;
     public UserRole Role { get; set; } = UserRole.USER;
-    public List<EmailAlias> EmailAliases { get; set; } = new();
-} 
+    public string? ResetToken { get; set; }
+    public DateTime? ResetTokenExpiry { get; set; }
+    public List<EmailForwarding> ForwardingAddresses { get; set; } = new();
+}

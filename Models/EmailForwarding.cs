@@ -6,4 +6,6 @@ public class EmailForwarding
     public string ForwardingAddress { get; set; } = string.Empty;
     public int EmailAliasId { get; set; }
     public EmailAlias EmailAlias { get; set; } = null!;
+    public int? UserId { get; set; }
+    public User? User { get; set; }
 } 

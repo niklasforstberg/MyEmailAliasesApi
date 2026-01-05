@@ -35,15 +35,14 @@ public static class AliasEndpoints
         }
 
         var aliases = await db.EmailAliases
+            .Where(a => a.ForwardingAddresses.Any(f => f.UserId == userId))
             .Include(a => a.ForwardingAddresses)
-            .Where(a => a.UserId == userId)
             .Select(a => new
             {
                 a.Id,
                 Alias = a.AliasAddress,
                 a.Status,
                 a.CreatedAt,
-                a.UserId,
                 ForwardingAddresses = a.ForwardingAddresses.Select(f => new
                 {
                     f.Id,
@@ -57,15 +56,14 @@ public static class AliasEndpoints
     private static async Task<IResult> GetUserAliases(int userId, EmailAliasDbContext db)
     {
         var aliases = await db.EmailAliases
+            .Where(a => a.ForwardingAddresses.Any(f => f.UserId == userId))
             .Include(a => a.ForwardingAddresses)
-            .Where(a => a.UserId == userId)
             .Select(a => new
             {
                 a.Id,
                 Alias = a.AliasAddress,
                 a.Status,
                 a.CreatedAt,
-                a.UserId,
                 ForwardingAddresses = a.ForwardingAddresses.Select(f => new
                 {
                     f.Id,
@@ -85,15 +83,14 @@ public static class AliasEndpoints
         }
 
         var alias = await db.EmailAliases
+            .Where(a => a.Id == aliasId && a.ForwardingAddresses.Any(f => f.UserId == userId))
             .Include(a => a.ForwardingAddresses)
-            .Where(a => a.UserId == userId && a.Id == aliasId)
             .Select(a => new
             {
-                a.Id,   
+                a.Id,
                 Alias = a.AliasAddress,
                 a.Status,
                 a.CreatedAt,
-                a.UserId,
                 ForwardingAddresses = a.ForwardingAddresses.Select(f => new
                 {
                     f.Id,
@@ -101,7 +98,7 @@ public static class AliasEndpoints
                 }).ToList()
             })
             .FirstOrDefaultAsync();
-        
+
         return alias == null ? Results.NotFound() : Results.Ok(alias);
     }
 } 

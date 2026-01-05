@@ -4,6 +4,7 @@ using EmailAliasApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MyEmailAliasesApi.Migrations
 {
     [DbContext(typeof(EmailAliasDbContext))]
-    partial class EmailAliasDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260104102709_ConvertToManyToManyUserAlias")]
+    partial class ConvertToManyToManyUserAlias
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -64,14 +67,9 @@ namespace MyEmailAliasesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("EmailAliasId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("EmailForwardings");
                 });
@@ -92,12 +90,6 @@ namespace MyEmailAliasesApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ResetToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ResetTokenExpiry")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Role")
                         .HasColumnType("int");
 
@@ -110,6 +102,21 @@ namespace MyEmailAliasesApi.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("EmailAliasApi.Models.UserEmailAlias", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("EmailAliasId")
+                        .HasColumnType("int");
+
+                    b.HasKey("UserId", "EmailAliasId");
+
+                    b.HasIndex("EmailAliasId");
+
+                    b.ToTable("UserEmailAliases");
+                });
+
             modelBuilder.Entity("EmailAliasApi.Models.EmailForwarding", b =>
                 {
                     b.HasOne("EmailAliasApi.Models.EmailAlias", "EmailAlias")
@@ -118,10 +125,22 @@ namespace MyEmailAliasesApi.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("EmailAlias");
+                });
+
+            modelBuilder.Entity("EmailAliasApi.Models.UserEmailAlias", b =>
+                {
+                    b.HasOne("EmailAliasApi.Models.EmailAlias", "EmailAlias")
+                        .WithMany("UserEmailAliases")
+                        .HasForeignKey("EmailAliasId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("EmailAliasApi.Models.User", "User")
-                        .WithMany("ForwardingAddresses")
+                        .WithMany("UserEmailAliases")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("EmailAlias");
 
@@ -131,11 +150,13 @@ namespace MyEmailAliasesApi.Migrations
             modelBuilder.Entity("EmailAliasApi.Models.EmailAlias", b =>
                 {
                     b.Navigation("ForwardingAddresses");
+
+                    b.Navigation("UserEmailAliases");
                 });
 
             modelBuilder.Entity("EmailAliasApi.Models.User", b =>
                 {
-                    b.Navigation("ForwardingAddresses");
+                    b.Navigation("UserEmailAliases");
                 });
 #pragma warning restore 612, 618
         }
