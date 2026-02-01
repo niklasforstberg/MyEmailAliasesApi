@@ -1,83 +1,256 @@
+/* ========================================
+   LOGIN / AUTH FORMS - WHITE & DARK WOOD
+   ======================================== */
+
 .login-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 60vh;
+  min-height: 70vh;
+  padding: 2rem;
 }
 
+/* ========================================
+   LOGIN CARD
+   ======================================== */
+
 .login-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  padding: 2.5rem;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 .login-card h2 {
-  margin-bottom: 1.5rem;
-  color: #2c3e50;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
   text-align: center;
+  margin-bottom: 0.5rem;
 }
 
-.form-group {
+.login-card-subtitle {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* ========================================
+   CARD DECORATION
+   ======================================== */
+
+.card-decoration {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
   margin-bottom: 1.5rem;
+}
+
+.decoration-line {
+  flex: 1;
+  height: 1px;
+  background: var(--light-gray);
+}
+
+.decoration-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--wood-dark) 0%, var(--wood-darkest) 100%);
+  border-radius: 50%;
+  color: var(--white);
+}
+
+.decoration-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ========================================
+   FORM ELEMENTS
+   ======================================== */
+
+.form-group {
+  margin-bottom: 1.25rem;
 }
 
 .form-group label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
-  font-weight: 500;
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-secondary);
 }
 
 .form-group input {
   width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
+  padding: 0.875rem 1rem;
+  font-family: var(--font-body);
   font-size: 1rem;
-  transition: border-color 0.2s;
+  color: var(--text-primary);
+  background: var(--white);
+  border: 1px solid var(--light-gray);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-medium);
+}
+
+.form-group input::placeholder {
+  color: var(--text-muted);
 }
 
 .form-group input:focus {
   outline: none;
-  border-color: #3498db;
+  border-color: var(--green-mid);
+  box-shadow: 0 0 0 3px rgba(61, 122, 100, 0.1);
 }
 
 .form-group input:disabled {
-  background-color: #f5f5f5;
+  background: var(--snow);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
+/* ========================================
+   ERROR MESSAGE
+   ======================================== */
+
 .error-message {
-  background-color: #fee;
-  color: #c33;
-  padding: 0.75rem;
-  border-radius: 4px;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
+  background: var(--error-light);
+  border: 1px solid rgba(192, 57, 43, 0.2);
+  color: var(--error-red);
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
+
+/* ========================================
+   SUCCESS MESSAGE
+   ======================================== */
+
+.success-message {
+  background: var(--success-light);
+  border: 1px solid rgba(39, 174, 96, 0.2);
+  color: var(--success-green);
+  padding: 0.875rem 1rem;
+  border-radius: var(--radius-md);
+  margin-bottom: 1.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* ========================================
+   SUBMIT BUTTON
+   ======================================== */
 
 .submit-btn {
   width: 100%;
-  padding: 0.75rem;
-  background-color: #3498db;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 0.875rem 1.5rem;
+  font-family: var(--font-body);
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
+  color: white;
+  background: var(--green-mid);
+  border: none;
+  border-radius: var(--radius-md);
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all var(--transition-medium);
+  box-shadow: var(--shadow-md);
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #2980b9;
+  background: var(--green-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-lg);
+}
+
+.submit-btn:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .submit-btn:disabled {
-  background-color: #95a5a6;
+  background: var(--mid-gray);
+  color: var(--text-muted);
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+/* ========================================
+   LINK BUTTON
+   ======================================== */
+
+.link-btn {
+  background: transparent;
+  border: none;
+  color: var(--green-mid);
+  font-family: var(--font-body);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+  padding: 0.5rem;
+}
+
+.link-btn:hover {
+  color: var(--green-dark);
+  text-decoration: underline;
+}
+
+.form-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1rem;
+    min-height: 60vh;
+  }
+
+  .login-card {
+    padding: 1.75rem;
+  }
+
+  .login-card h2 {
+    font-size: 1.5rem;
+  }
+
+  .form-group input {
+    padding: 0.75rem 0.875rem;
+  }
+
+  .submit-btn {
+    padding: 0.75rem 1.25rem;
+  }
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

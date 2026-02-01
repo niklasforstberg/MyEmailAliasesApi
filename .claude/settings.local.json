@@ -4,7 +4,13 @@
       "Bash(dotnet build:*)",
       "Bash(dotnet ef migrations:*)",
       "Bash(source venv/bin/activate)",
-      "Bash(python fetchaliases.py:*)"
+      "Bash(python fetchaliases.py:*)",
+      "Skill(frontend-design)",
+      "Bash(jq:*)",
+      "Bash(/usr/local/bin/jq:*)",
+      "Bash(dotnet restore:*)",
+      "Bash(dotnet --version:*)"
     ]
-  }
+  },
+  "outputStyle": "Explanatory"
 }

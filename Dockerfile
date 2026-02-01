@@ -10,7 +10,7 @@ RUN npm run build
 RUN ls -la /src/wwwroot || (echo "wwwroot not found!" && exit 1)
 
 # Build .NET API
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY ["MyEmailAliasesApi.csproj", "./"]
 RUN dotnet restore
@@ -20,7 +20,7 @@ COPY --from=client-build /src/wwwroot ./wwwroot
 RUN dotnet publish -c Release -o /app/publish
 
 # Final runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 # Explicitly copy wwwroot
