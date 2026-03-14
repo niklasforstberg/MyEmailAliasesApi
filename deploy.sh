@@ -13,7 +13,9 @@ if [ ! -f "$ENV_FILE" ]; then
     echo "Create it with the required variables (see env.example for reference)."
     exit 1
 fi
-export $(grep -v '^#' "$ENV_FILE" | xargs)
+set -a
+source "$ENV_FILE"
+set +a
 
 # Pull latest changes (if in a git repository)
 if [ -d .git ]; then
