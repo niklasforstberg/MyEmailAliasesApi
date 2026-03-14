@@ -15,6 +15,11 @@ services:
       - Jwt__Audience=https://email.forstberg.net
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
       - ALLOWED_ORIGINS=https://email.forstberg.net
+      - smtp__username=${SMTP_USERNAME}
+      - smtp__password=${SMTP_PASSWORD}
+      - smtp__server=${SMTP_SERVER}
+      - smtp__sslport=${SMTP_SSLPORT}
+      - smtp__enablessl=${SMTP_ENABLESSL}
     ports:
       - "127.0.0.1:${API_PORT:-8080}:80"  # Exposed to localhost for Caddy reverse proxy (default: 8080)
     networks:
