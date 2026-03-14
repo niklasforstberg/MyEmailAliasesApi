@@ -166,4 +166,11 @@ if (Directory.Exists("wwwroot"))
     app.MapFallbackToFile("index.html");
 }
 
+// Run database migrations on startup
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EmailAliasDbContext>();
+    db.Database.Migrate();
+}
+
 app.Run();
