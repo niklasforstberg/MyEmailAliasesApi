@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: myemailaliasesapi
+    restart: unless-stopped
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:80
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=https://email.forstberg.net
+      - Jwt__Audience=https://email.forstberg.net
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - ALLOWED_ORIGINS=https://email.forstberg.net
+    ports:
+      - "127.0.0.1:${API_PORT:-8080}:80"  # Exposed to localhost for Caddy reverse proxy (default: 8080)
+    # To connect to existing database:
+    # Option 1: If database is on host network, use host.docker.internal (Linux) or host IP
+    # Option 2: If database is on a Docker network, add it to networks below and use container name in connection string
+    # networks:
+    #   - your-existing-db-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

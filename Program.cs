@@ -10,8 +10,20 @@ using System.Text.Json;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using EmailAliasApi.Models;
+using Microsoft.AspNetCore.HttpOverrides;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Configure forwarded headers for Cloudflare/Caddy reverse proxy
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+                               Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto |
+                               Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedHost;
+    // Trust all proxies (Cloudflare and Caddy)
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 // Add CORS service
 builder.Services.AddCors(options =>
@@ -112,13 +124,18 @@ builder.Services.AddScoped<EmailService>();
 
 var app = builder.Build();
 
+// Use forwarded headers (must be first)
+app.UseForwardedHeaders();
+
 // Configure the HTTP request pipeline.
 app.UseSwagger(c =>
 {
     c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
     {
-        // Force Swagger to use HTTP
-        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"http://{httpReq.Host.Value}" } };
+        // Detect protocol from forwarded headers (Cloudflare provides HTTPS)
+        var scheme = httpReq.Scheme;
+        var host = httpReq.Host.Value;
+        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{scheme}://{host}" } };
     });
 });
 app.UseSwaggerUI();
@@ -128,6 +145,11 @@ app.UseCors("AllowLocalhost");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Health check endpoint
+app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }))
+    .WithTags("Health")
+    .AllowAnonymous();
 
 // Map all API endpoints (must be before static files)
 app.MapAliasEndpoints();

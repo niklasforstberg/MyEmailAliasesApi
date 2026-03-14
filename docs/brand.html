@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Peach — Brand Book</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Nunito:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    /* ==========================================
+       PEACH DESIGN SYSTEM — BRAND BOOK
+       Mirror of src/index.css :root
+       Keep this file in sync with index.css
+       ========================================== */
+    :root {
+      /* Peach Palette */
+      --soft-apricot: #f9dbbd;
+      --cotton-candy: #ffa5ab;
+      --blush-rose: #da627d;
+      --berry-crush: #a53860;
+      --night-bordeaux: #450920;
+
+      /* Surfaces */
+      --surface-page: #fef7f1;
+      --surface-subtle: #fceade;
+      --surface-inverse: #450920;
+      --surface-inverse-mid: #6b1535;
+
+      /* Borders */
+      --border-subtle: #f0d5c0;
+      --border-default: #dbbda8;
+
+      /* Text */
+      --white: #ffffff;
+      --text-primary: #1a0810;
+      --text-secondary: #4a2535;
+      --text-muted: #8a6070;
+
+      /* Actions */
+      --action: #da627d;
+      --action-hover: #a53860;
+      --action-light: #ffa5ab;
+
+      /* Accents */
+      --accent: #a53860;
+      --accent-mid: #c0496e;
+      --accent-light: #da627d;
+
+      /* Typography */
+      --font-display: 'Cormorant Garamond', Georgia, serif;
+      --font-body: 'Nunito', -apple-system, sans-serif;
+
+      /* Shape */
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+      --shadow-panel: 0 4px 20px rgba(69,9,32,0.15);
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--surface-page);
+      color: var(--text-primary);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── Header ── */
+    .bb-header {
+      background: linear-gradient(135deg, var(--surface-inverse-mid), var(--surface-inverse));
+      padding: 4rem 2rem 3rem;
+      text-align: center;
+    }
+
+    .bb-wordmark {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 4rem;
+      font-weight: 300;
+      letter-spacing: 0.15em;
+      color: var(--soft-apricot);
+    }
+
+    .bb-tagline {
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(249, 219, 189, 0.55);
+      margin-top: 0.75rem;
+    }
+
+    /* ── Sticky Nav ── */
+    .bb-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--surface-inverse);
+      display: flex;
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .bb-nav a {
+      font-family: var(--font-body);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(249, 219, 189, 0.6);
+      text-decoration: none;
+      padding: 0.875rem 1.5rem;
+      white-space: nowrap;
+      transition: color 0.2s, background 0.2s;
+      border-right: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .bb-nav a:hover {
+      color: var(--soft-apricot);
+      background: rgba(255,255,255,0.04);
+    }
+
+    /* ── Section Layout ── */
+    .bb-section {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .bb-section:last-of-type { border-bottom: none; }
+
+    .bb-section-title {
+      font-family: var(--font-display);
+      font-size: 1.75rem;
+      font-weight: 400;
+      color: var(--text-primary);
+      margin-bottom: 0.375rem;
+    }
+
+    .bb-section-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+
+    /* ── Color Swatches ── */
+    .bb-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 1rem;
+    }
+
+    .bb-swatch {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .bb-swatch-color { height: 80px; }
+
+    .bb-swatch-info {
+      background: var(--white);
+      padding: 0.625rem 0.75rem;
+      border: 1px solid var(--border-subtle);
+      border-top: none;
+      border-radius: 0 0 var(--radius-md) var(--radius-md);
+    }
+
+    .bb-swatch-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: block;
+    }
+
+    .bb-swatch-hex {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .bb-swatch-var {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: var(--accent);
+      display: block;
+      margin-top: 0.15rem;
+    }
+
+    /* ── Tables ── */
+    .bb-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+
+    .bb-table th {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border-subtle);
+    }
+
+    .bb-table td {
+      color: var(--text-secondary);
+      padding: 0.625rem 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: middle;
+    }
+
+    .bb-table td:first-child {
+      font-family: monospace;
+      font-size: 0.8rem;
+      color: var(--accent);
+    }
+
+    .bb-dot {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 1px solid rgba(0,0,0,0.08);
+      vertical-align: middle;
+    }
+
+    /* ── Type Specimens ── */
+    .bb-specimen {
+      padding: 1.5rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 1rem;
+    }
+
+    .bb-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 0.875rem;
+    }
+
+    .bb-meta {
+      font-family: monospace;
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 0.75rem;
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 0.75rem;
+    }
+
+    code {
+      font-family: monospace;
+      font-size: 0.8rem;
+      background: var(--surface-subtle);
+      color: var(--accent);
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+    }
+
+    /* ── Component Previews ── */
+    .bb-component {
+      padding: 1.5rem;
+      background: var(--white);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 1rem;
+    }
+
+    /* Buttons */
+    .pb-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.875rem 1.75rem;
+      border: none;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      background: var(--action);
+      color: white;
+      box-shadow: var(--shadow-md);
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .pb-primary:hover { background: var(--action-hover); transform: translateY(-1px); box-shadow: var(--shadow-lg); }
+    .pb-primary:disabled { background: var(--border-default); color: var(--text-muted); cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .pb-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-body);
+      font-weight: 600;
+      font-size: 0.95rem;
+      padding: 0.875rem 1.75rem;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      background: var(--white);
+      color: var(--text-primary);
+      transition: all 0.2s;
+    }
+
+    .pb-secondary:hover { background: var(--surface-subtle); border-color: var(--border-default); }
+
+    .pb-row { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+
+    /* Inputs */
+    .pb-input {
+      width: 100%;
+      padding: 0.875rem 1rem;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      color: var(--text-primary);
+      background: var(--white);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .pb-input:focus {
+      border-color: var(--action);
+      box-shadow: 0 0 0 3px rgba(218, 98, 125, 0.15);
+    }
+
+    /* Alias card */
+    .pb-alias-card {
+      padding: 1.25rem;
+      border-radius: var(--radius-md);
+      background: linear-gradient(145deg, var(--surface-inverse-mid), var(--surface-inverse));
+      color: var(--white);
+      box-shadow: var(--shadow-panel);
+      max-width: 320px;
+    }
+
+    .pb-alias-email { display: flex; align-items: center; gap: 0.75rem; }
+
+    .pb-alias-icon {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--action);
+      border-radius: var(--radius-sm);
+      flex-shrink: 0;
+    }
+
+    .pb-alias-text { font-weight: 600; font-size: 0.95rem; }
+
+    .pb-alias-forwards {
+      margin-top: 1rem;
+      padding-top: 0.875rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .pb-forwards-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.4rem;
+    }
+
+    .pb-forward-item {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.85);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.15rem 0;
+    }
+
+    .pb-forward-item svg { color: var(--action-light); flex-shrink: 0; }
+
+    /* Login card */
+    .pb-login-card {
+      max-width: 360px;
+      padding: 2rem;
+      background: var(--white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .pb-login-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--surface-inverse-mid), var(--surface-inverse));
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    /* Header preview */
+    .pb-app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 1.5rem;
+      background: linear-gradient(135deg, var(--surface-inverse-mid), var(--surface-inverse) 50%, var(--surface-inverse-mid));
+      border-radius: var(--radius-md);
+    }
+
+    .pb-header-brand { display: flex; align-items: center; gap: 0.875rem; }
+
+    .pb-header-logo {
+      width: 40px;
+      height: 40px;
+      background: var(--action);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .pb-logout {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,255,255,0.1);
+      color: var(--white);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-md);
+      font-family: var(--font-body);
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+
+    /* Footer */
+    .bb-footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      background: var(--surface-inverse);
+      color: rgba(249,219,189,0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HEADER ═══ -->
+  <header class="bb-header">
+    <span class="bb-wordmark">Peach</span>
+    <div class="bb-tagline">Brand Style Guide · Email Aliases App</div>
+  </header>
+
+  <!-- ═══ NAV ═══ -->
+  <nav class="bb-nav">
+    <a href="#palette">Palette</a>
+    <a href="#surfaces">Surfaces</a>
+    <a href="#typography">Typography</a>
+    <a href="#actions">Actions</a>
+    <a href="#components">Components</a>
+  </nav>
+
+  <!-- ═══ PALETTE ═══ -->
+  <section class="bb-section" id="palette">
+    <h2 class="bb-section-title">Color Palette</h2>
+    <p class="bb-section-desc">Five raw palette colors — the source of truth. All semantic variables reference these. Never use raw hex values directly in component CSS; always go through a semantic variable.</p>
+
+    <div class="bb-swatches">
+      <div class="bb-swatch">
+        <div class="bb-swatch-color" style="background:#f9dbbd"></div>
+        <div class="bb-swatch-info">
+          <span class="bb-swatch-name">Soft Apricot</span>
+          <span class="bb-swatch-hex">#f9dbbd</span>
+          <span class="bb-swatch-var">--soft-apricot</span>
+        </div>
+      </div>
+      <div class="bb-swatch">
+        <div class="bb-swatch-color" style="background:#ffa5ab"></div>
+        <div class="bb-swatch-info">
+          <span class="bb-swatch-name">Cotton Candy</span>
+          <span class="bb-swatch-hex">#ffa5ab</span>
+          <span class="bb-swatch-var">--cotton-candy</span>
+        </div>
+      </div>
+      <div class="bb-swatch">
+        <div class="bb-swatch-color" style="background:#da627d"></div>
+        <div class="bb-swatch-info">
+          <span class="bb-swatch-name">Blush Rose</span>
+          <span class="bb-swatch-hex">#da627d</span>
+          <span class="bb-swatch-var">--blush-rose</span>
+        </div>
+      </div>
+      <div class="bb-swatch">
+        <div class="bb-swatch-color" style="background:#a53860"></div>
+        <div class="bb-swatch-info">
+          <span class="bb-swatch-name">Berry Crush</span>
+          <span class="bb-swatch-hex">#a53860</span>
+          <span class="bb-swatch-var">--berry-crush</span>
+        </div>
+      </div>
+      <div class="bb-swatch">
+        <div class="bb-swatch-color" style="background:#450920"></div>
+        <div class="bb-swatch-info">
+          <span class="bb-swatch-name">Night Bordeaux</span>
+          <span class="bb-swatch-hex">#450920</span>
+          <span class="bb-swatch-var">--night-bordeaux</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SURFACES ═══ -->
+  <section class="bb-section" id="surfaces">
+    <h2 class="bb-section-title">Surfaces &amp; Borders</h2>
+    <p class="bb-section-desc">Purpose-driven variables for backgrounds and borders. These are what you reference in CSS — not the raw palette colors.</p>
+
+    <table class="bb-table">
+      <thead>
+        <tr>
+          <th>Variable</th>
+          <th>Swatch</th>
+          <th>Value</th>
+          <th>Used for</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>--surface-page</td>
+          <td><span class="bb-dot" style="background:#fef7f1"></span></td>
+          <td>#fef7f1</td>
+          <td>Main page background</td>
+        </tr>
+        <tr>
+          <td>--surface-subtle</td>
+          <td><span class="bb-dot" style="background:#fceade"></span></td>
+          <td>#fceade</td>
+          <td>Disabled inputs, empty-state fills, scrollbar track</td>
+        </tr>
+        <tr>
+          <td>--white</td>
+          <td><span class="bb-dot" style="background:#ffffff; border-color:#ddd"></span></td>
+          <td>#ffffff</td>
+          <td>Cards, modals, text on dark surfaces</td>
+        </tr>
+        <tr>
+          <td>--surface-inverse</td>
+          <td><span class="bb-dot" style="background:#450920"></span></td>
+          <td>#450920 (night-bordeaux)</td>
+          <td>Header, alias cards — dark base</td>
+        </tr>
+        <tr>
+          <td>--surface-inverse-mid</td>
+          <td><span class="bb-dot" style="background:#6b1535"></span></td>
+          <td>#6b1535</td>
+          <td>Header, alias cards — gradient highlight pair</td>
+        </tr>
+        <tr>
+          <td>--border-subtle</td>
+          <td><span class="bb-dot" style="background:#f0d5c0"></span></td>
+          <td>#f0d5c0</td>
+          <td>Default input and card outlines</td>
+        </tr>
+        <tr>
+          <td>--border-default</td>
+          <td><span class="bb-dot" style="background:#dbbda8"></span></td>
+          <td>#dbbda8</td>
+          <td>Hover borders, dividers, scrollbar thumb</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ TYPOGRAPHY ═══ -->
+  <section class="bb-section" id="typography">
+    <h2 class="bb-section-title">Typography</h2>
+    <p class="bb-section-desc">Two fonts, two distinct roles. Cormorant Garamond carries identity and hierarchy; Nunito handles all UI and readable text.</p>
+
+    <div class="bb-specimen">
+      <div class="bb-label">Display — Cormorant Garamond · <code>--font-display</code></div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:3.5rem; font-weight:300; color:#1a0810; line-height:1.1; letter-spacing:0.01em">
+        Email Aliases
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.75rem; font-weight:400; color:#1a0810; margin-top:0.75rem">
+        Your forwarding addresses
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.375rem; font-weight:600; color:#4a2535; margin-top:0.5rem">
+        Section heading at weight 600
+      </div>
+      <div style="font-family:'Cormorant Garamond',serif; font-size:1.125rem; font-style:italic; font-weight:300; color:#8a6070; margin-top:0.4rem">
+        Italic light — for captions or decorative labels
+      </div>
+      <div class="bb-meta">
+        Weights: 300 (hero), 400 (subheadings), 600 (section headings)<br>
+        Best at: 1.125rem and above — below that, use Nunito
+      </div>
+    </div>
+
+    <div class="bb-specimen">
+      <div class="bb-label">Body — Nunito · <code>--font-body</code></div>
+      <div style="font-family:'Nunito',sans-serif; font-size:1rem; font-weight:400; color:#1a0810; line-height:1.6; max-width:520px">
+        Manage your email aliases and forwarding addresses from one.com. Clean, readable, and warm.
+      </div>
+      <div style="font-family:'Nunito',sans-serif; font-size:0.875rem; font-weight:600; color:#4a2535; margin-top:0.875rem">
+        Label text — Nunito 600 · <code>--text-secondary</code>
+      </div>
+      <div style="font-family:'Nunito',sans-serif; font-size:0.875rem; font-weight:400; color:#8a6070; margin-top:0.25rem">
+        Muted helper text — Nunito 400 · <code>--text-muted</code>
+      </div>
+      <div style="font-family:'Nunito',sans-serif; font-size:0.7rem; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:#8a6070; margin-top:0.5rem">
+        CAPS LABEL — Nunito 700 · 0.7rem · letter-spacing 0.1em
+      </div>
+      <div class="bb-meta">
+        Weights: 400 (body), 500 (ui), 600 (labels, buttons), 700 (uppercase caps labels)
+      </div>
+    </div>
+
+    <table class="bb-table" style="margin-top:1rem">
+      <thead>
+        <tr><th>Variable</th><th>Value</th><th>Used for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>--text-primary</td>
+          <td style="font-family:monospace; font-size:0.8rem">#1a0810</td>
+          <td>Headings, body text on light surfaces</td>
+        </tr>
+        <tr>
+          <td>--text-secondary</td>
+          <td style="font-family:monospace; font-size:0.8rem">#4a2535</td>
+          <td>Form labels, secondary text</td>
+        </tr>
+        <tr>
+          <td>--text-muted</td>
+          <td style="font-family:monospace; font-size:0.8rem">#8a6070</td>
+          <td>Placeholder, helper text, counts, subtitles</td>
+        </tr>
+        <tr>
+          <td>--white</td>
+          <td style="font-family:monospace; font-size:0.8rem">#ffffff</td>
+          <td>All text on dark (inverse) surfaces</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ ACTIONS ═══ -->
+  <section class="bb-section" id="actions">
+    <h2 class="bb-section-title">Actions</h2>
+    <p class="bb-section-desc">Buttons, links, and focus states. The action variables encode intent — not color names.</p>
+
+    <div class="bb-component">
+      <div class="bb-label">Button States</div>
+      <div class="pb-row">
+        <button class="pb-primary">Primary Action</button>
+        <button class="pb-secondary">Secondary</button>
+        <button class="pb-primary" disabled>Disabled</button>
+      </div>
+    </div>
+
+    <div class="bb-component">
+      <div class="bb-label">Input States</div>
+      <div style="display:flex; flex-direction:column; gap:0.75rem; max-width:380px">
+        <input class="pb-input" type="text" placeholder="Default — click to see focus state" />
+        <input class="pb-input" type="text" value="Focused" style="border-color:#da627d; box-shadow:0 0 0 3px rgba(218,98,125,0.15)" readonly />
+        <input class="pb-input" type="text" disabled placeholder="Disabled" style="background:#fceade; color:#8a6070; cursor:not-allowed" />
+      </div>
+    </div>
+
+    <table class="bb-table" style="margin-top:1rem">
+      <thead>
+        <tr><th>Variable</th><th>Swatch</th><th>Source</th><th>Used for</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>--action</td>
+          <td><span class="bb-dot" style="background:#da627d"></span></td>
+          <td>blush-rose</td>
+          <td>Button fills, link color, focus border</td>
+        </tr>
+        <tr>
+          <td>--action-hover</td>
+          <td><span class="bb-dot" style="background:#a53860"></span></td>
+          <td>berry-crush</td>
+          <td>Button hover, link hover, active state</td>
+        </tr>
+        <tr>
+          <td>--action-light</td>
+          <td><span class="bb-dot" style="background:#ffa5ab"></span></td>
+          <td>cotton-candy</td>
+          <td>Forwarding arrow icons on dark alias cards</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- ═══ COMPONENTS ═══ -->
+  <section class="bb-section" id="components">
+    <h2 class="bb-section-title">Components</h2>
+    <p class="bb-section-desc">Core UI building blocks. Each demonstrates the full system in combination: surface, border, typography, and action colors.</p>
+
+    <div class="bb-component">
+      <div class="bb-label">App Header</div>
+      <div class="pb-app-header">
+        <div class="pb-header-brand">
+          <div class="pb-header-logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M22 7l-10 7L2 7"/>
+            </svg>
+          </div>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:1.4rem; font-weight:400; color:white; letter-spacing:0.02em">Email Aliases</span>
+        </div>
+        <button class="pb-logout">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Logout
+        </button>
+      </div>
+      <div class="bb-meta" style="margin-top:0.75rem; border:none; padding:0">
+        Gradient: <code>--surface-inverse-mid</code> → <code>--surface-inverse</code> · Logo bg: <code>--action</code>
+      </div>
+    </div>
+
+    <div class="bb-component">
+      <div class="bb-label">Alias Card</div>
+      <div class="pb-alias-card">
+        <div class="pb-alias-email">
+          <div class="pb-alias-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="M22 7l-10 7L2 7"/>
+            </svg>
+          </div>
+          <span class="pb-alias-text">info@forstberg.com</span>
+        </div>
+        <div class="pb-alias-forwards">
+          <div class="pb-forwards-label">Forwards to</div>
+          <div class="pb-forward-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            me@gmail.com
+          </div>
+          <div class="pb-forward-item">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            work@example.com
+          </div>
+        </div>
+      </div>
+      <div class="bb-meta" style="margin-top:0.75rem; border:none; padding:0">
+        Surface: gradient <code>--surface-inverse-mid</code> → <code>--surface-inverse</code> · Icon bg: <code>--action</code> · Arrow: <code>--action-light</code>
+      </div>
+    </div>
+
+    <div class="bb-component">
+      <div class="bb-label">Login Card</div>
+      <div class="pb-login-card">
+        <div class="pb-login-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </div>
+        <div style="font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; text-align:center; margin-bottom:0.25rem; color:#1a0810">Sign in</div>
+        <div style="font-size:0.875rem; color:#8a6070; text-align:center; margin-bottom:1.5rem">Email Aliases</div>
+        <div style="margin-bottom:1rem">
+          <label style="font-size:0.875rem; font-weight:600; color:#4a2535; display:block; margin-bottom:0.4rem">Email</label>
+          <input class="pb-input" type="email" placeholder="you@forstberg.com" />
+        </div>
+        <div style="margin-bottom:1.25rem">
+          <label style="font-size:0.875rem; font-weight:600; color:#4a2535; display:block; margin-bottom:0.4rem">Password</label>
+          <input class="pb-input" type="password" placeholder="••••••••" />
+        </div>
+        <button class="pb-primary" style="width:100%">Log in</button>
+      </div>
+      <div class="bb-meta" style="margin-top:0.75rem; border:none; padding:0">
+        Card surface: <code>--white</code> · Decoration icon: gradient <code>--surface-inverse-mid</code> → <code>--surface-inverse</code>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bb-footer">
+    Peach Design System · Keep in sync with <code style="color:rgba(249,219,189,0.5); background:rgba(255,255,255,0.05)">src/index.css</code>
+  </footer>
+
+</body>
+</html>

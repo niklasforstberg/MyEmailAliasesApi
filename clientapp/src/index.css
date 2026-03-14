@@ -1,33 +1,41 @@
 /* ========================================
-   TRYSIL DESIGN SYSTEM
-   White & Dark Wood Scandinavian Style
+   PEACH DESIGN SYSTEM
+   Warm Rose & Bordeaux Palette
    ======================================== */
 
 :root {
-  /* Dark Wood Tones */
-  --wood-darkest: #2c1810;
-  --wood-dark: #3d2317;
-  --wood-mid: #5c3a2e;
-  --wood-accent: #6b4532;
-  --wood-light: #8b6b5a;
+  /* Peach Palette — raw named colors, source of truth */
+  --soft-apricot: #f9dbbd;
+  --cotton-candy: #ffa5ab;
+  --blush-rose: #da627d;
+  --berry-crush: #a53860;
+  --night-bordeaux: #450920;
 
-  /* Clean Whites */
+  /* Surfaces — where content sits */
+  --surface-page: #fef7f1;          /* warm off-white page background */
+  --surface-subtle: #fceade;        /* disabled inputs, empty state fills */
+  --surface-inverse: var(--night-bordeaux);    /* dark panels: header, cards */
+  --surface-inverse-mid: #6b1535;   /* lighter dark, used as gradient pair */
+
+  /* Borders */
+  --border-subtle: #f0d5c0;         /* default input & card outlines */
+  --border-default: #dbbda8;        /* hover borders, dividers */
+
+  /* Text */
   --white: #ffffff;
-  --off-white: #fafafa;
-  --snow: #f5f5f5;
-  --light-gray: #e8e8e8;
-  --mid-gray: #d0d0d0;
+  --text-primary: #1a0810;
+  --text-secondary: #4a2535;
+  --text-muted: #8a6070;
 
-  /* Text Colors */
-  --text-primary: #1a1a1a;
-  --text-secondary: #4a4a4a;
-  --text-muted: #7a7a7a;
+  /* Actions — buttons, links, focus rings */
+  --action: var(--blush-rose);
+  --action-hover: var(--berry-crush);
+  --action-light: var(--cotton-candy);
 
-  /* Green Accent (Buttons) */
-  --green-dark: #2d5a4a;
-  --green-mid: #3d7a64;
-  --green-light: #4a9578;
-  --green-hover: #245545;
+  /* Accents — decorative icons on dark surfaces */
+  --accent: var(--berry-crush);
+  --accent-mid: #c0496e;
+  --accent-light: var(--blush-rose);
 
   /* Functional */
   --error-red: #c0392b;
@@ -43,7 +51,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-wood: 0 4px 20px rgba(44, 24, 16, 0.15);
+  --shadow-panel: 0 4px 20px rgba(69, 9, 32, 0.15);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -71,7 +79,7 @@ body {
   font-weight: 400;
   line-height: 1.6;
   color: var(--text-primary);
-  background: var(--off-white);
+  background: var(--surface-page);
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -102,29 +110,29 @@ p {
 }
 
 a {
-  color: var(--green-mid);
+  color: var(--action);
   text-decoration: none;
   transition: color var(--transition-fast);
 }
 
 a:hover {
-  color: var(--green-dark);
+  color: var(--action-hover);
 }
 
 /* ========================================
-   DARK WOOD PANEL
+   DARK PANEL
    ======================================== */
 
-.wood-panel {
+.panel-inverse {
   background: linear-gradient(135deg,
-    var(--wood-dark) 0%,
-    var(--wood-darkest) 50%,
-    var(--wood-dark) 100%
+    var(--surface-inverse-mid) 0%,
+    var(--surface-inverse) 50%,
+    var(--surface-inverse-mid) 100%
   );
   position: relative;
 }
 
-.wood-panel::before {
+.panel-inverse::before {
   content: '';
   position: absolute;
   top: 0;
@@ -170,13 +178,13 @@ a:hover {
 }
 
 .btn-primary {
-  background: var(--green-mid);
+  background: var(--action);
   color: white;
   box-shadow: var(--shadow-md);
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: var(--green-hover);
+  background: var(--action-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
 }
@@ -186,7 +194,7 @@ a:hover {
 }
 
 .btn-primary:disabled {
-  background: var(--mid-gray);
+  background: var(--border-default);
   color: var(--text-muted);
   cursor: not-allowed;
   box-shadow: none;
@@ -195,12 +203,12 @@ a:hover {
 .btn-secondary {
   background: var(--white);
   color: var(--text-primary);
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--border-subtle);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--snow);
-  border-color: var(--mid-gray);
+  background: var(--surface-subtle);
+  border-color: var(--border-default);
 }
 
 /* ========================================
@@ -214,7 +222,7 @@ a:hover {
   font-size: 1rem;
   color: var(--text-primary);
   background: var(--white);
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   transition: all var(--transition-medium);
 }
@@ -225,12 +233,12 @@ a:hover {
 
 .input:focus {
   outline: none;
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 3px rgba(61, 122, 100, 0.1);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgba(218, 98, 125, 0.15);
 }
 
 .input:disabled {
-  background: var(--snow);
+  background: var(--surface-subtle);
   color: var(--text-muted);
   cursor: not-allowed;
 }
@@ -245,17 +253,17 @@ a:hover {
   box-shadow: var(--shadow-md);
 }
 
-.card-wood {
+.card-inverse {
   background: linear-gradient(145deg,
-    var(--wood-dark) 0%,
-    var(--wood-darkest) 100%
+    var(--surface-inverse-mid) 0%,
+    var(--surface-inverse) 100%
   );
   color: var(--white);
   position: relative;
   overflow: hidden;
 }
 
-.card-wood::before {
+.card-inverse::before {
   content: '';
   position: absolute;
   top: 0;
@@ -327,11 +335,11 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--snow);
+  background: var(--surface-subtle);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--mid-gray);
+  background: var(--border-default);
   border-radius: 4px;
 }
 
