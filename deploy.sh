@@ -24,12 +24,12 @@ fi
 
 # Stop and remove existing containers
 echo "Stopping existing containers..."
-docker-compose down || true
+docker compose down || true
 
 # Build and start containers
 echo "Building and starting containers..."
-docker-compose build --no-cache
-docker-compose up -d
+docker compose build --no-cache
+docker compose up -d
 
 # Wait for database to be ready
 echo "Waiting for database to be ready..."
@@ -37,7 +37,7 @@ sleep 10
 
 # Run database migrations
 echo "Running database migrations..."
-docker-compose exec -T api dotnet ef database update || echo "Migrations may have failed - check logs"
+docker compose exec -T api dotnet ef database update || echo "Migrations may have failed - check logs"
 
 # Show container status
 echo ""
@@ -46,8 +46,8 @@ echo "Deployment complete!"
 echo "=========================================="
 echo ""
 echo "Container status:"
-docker-compose ps
+docker compose ps
 echo ""
-echo "To view logs: docker-compose logs -f"
-echo "To stop: docker-compose down"
+echo "To view logs: docker compose logs -f"
+echo "To stop: docker compose down"
 echo ""
