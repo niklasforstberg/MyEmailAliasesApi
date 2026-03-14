@@ -7,7 +7,7 @@ echo "Deploying MyEmailAliasesApi to Docker"
 echo "=========================================="
 
 # Load environment variables from a fixed path outside the checkout
-ENV_FILE="${DEPLOY_ENV_FILE:-/home/deploy/.env}"
+ENV_FILE="${DEPLOY_ENV_FILE:-/home/deploy/.env.myemailaliasesapi}"
 if [ ! -f "$ENV_FILE" ]; then
     echo "ERROR: .env file not found at $ENV_FILE"
     echo "Create it with the required variables (see env.example for reference)."
