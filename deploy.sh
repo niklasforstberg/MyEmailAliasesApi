@@ -1,30 +1,53 @@
 #!/bin/bash
 
-# Pull latest changes with error checking
-echo "Fetching latest changes..."
-git fetch origin main
-git reset --hard origin/main
+set -e
 
-# Stop and remove existing container
-echo "Stopping and removing existing container..."
-docker stop myemailaliasesapi || true
-docker rm myemailaliasesapi || true
+echo "=========================================="
+echo "Deploying MyEmailAliasesApi to Docker"
+echo "=========================================="
 
-# Build new image
-echo "Building new image..."
-docker build -t myemailaliasesapi:latest .
+# Load environment variables from a fixed path outside the checkout
+ENV_FILE="${DEPLOY_ENV_FILE:-/home/deploy/.env}"
+if [ ! -f "$ENV_FILE" ]; then
+    echo "ERROR: .env file not found at $ENV_FILE"
+    echo "Create it with the required variables (see env.example for reference)."
+    exit 1
+fi
+export $(grep -v '^#' "$ENV_FILE" | xargs)
 
-# Run new container
-echo "Starting new container..."
-docker run -d \
-  --name myemailaliasesapi \
-  --restart unless-stopped \
-  --env-file env.list \
-  -p 8081:8080 \
-  myemailaliasesapi:latest
+# Pull latest changes (if in a git repository)
+if [ -d .git ]; then
+    echo "Fetching latest changes..."
+    git fetch origin main 2>/dev/null || git fetch origin master 2>/dev/null || echo "No git remote found, skipping fetch"
+    git reset --hard origin/main 2>/dev/null || git reset --hard origin/master 2>/dev/null || echo "No git branch found, skipping reset"
+fi
 
-# Clean up old images
-echo "Cleaning up old images..."
-docker image prune -f
+# Stop and remove existing containers
+echo "Stopping existing containers..."
+docker-compose down || true
 
-echo "Deployment complete!" 
+# Build and start containers
+echo "Building and starting containers..."
+docker-compose build --no-cache
+docker-compose up -d
+
+# Wait for database to be ready
+echo "Waiting for database to be ready..."
+sleep 10
+
+# Run database migrations
+echo "Running database migrations..."
+docker-compose exec -T api dotnet ef database update || echo "Migrations may have failed - check logs"
+
+# Show container status
+echo ""
+echo "=========================================="
+echo "Deployment complete!"
+echo "=========================================="
+echo ""
+echo "Container status:"
+docker-compose ps
+echo ""
+echo "To view logs: docker-compose logs -f"
+echo "To stop: docker-compose down"
+echo ""

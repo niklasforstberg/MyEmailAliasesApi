@@ -1,5 +1,5 @@
 /* ========================================
-   LOGIN / AUTH FORMS - WHITE & DARK WOOD
+   LOGIN / AUTH FORMS - PEACH
    ======================================== */
 
 .login-container {
@@ -56,7 +56,7 @@
 .decoration-line {
   flex: 1;
   height: 1px;
-  background: var(--light-gray);
+  background: var(--border-subtle);
 }
 
 .decoration-icon {
@@ -65,7 +65,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--wood-dark) 0%, var(--wood-darkest) 100%);
+  background: linear-gradient(135deg, var(--surface-inverse-mid) 0%, var(--surface-inverse) 100%);
   border-radius: 50%;
   color: var(--white);
 }
@@ -99,7 +99,7 @@
   font-size: 1rem;
   color: var(--text-primary);
   background: var(--white);
-  border: 1px solid var(--light-gray);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   transition: all var(--transition-medium);
 }
@@ -110,12 +110,12 @@
 
 .form-group input:focus {
   outline: none;
-  border-color: var(--green-mid);
-  box-shadow: 0 0 0 3px rgba(61, 122, 100, 0.1);
+  border-color: var(--action);
+  box-shadow: 0 0 0 3px rgba(218, 98, 125, 0.15);
 }
 
 .form-group input:disabled {
-  background: var(--snow);
+  background: var(--surface-subtle);
   color: var(--text-muted);
   cursor: not-allowed;
 }
@@ -162,7 +162,7 @@
   font-size: 1rem;
   font-weight: 600;
   color: white;
-  background: var(--green-mid);
+  background: var(--action);
   border: none;
   border-radius: var(--radius-md);
   cursor: pointer;
@@ -171,7 +171,7 @@
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: var(--green-hover);
+  background: var(--action-hover);
   transform: translateY(-1px);
   box-shadow: var(--shadow-lg);
 }
@@ -181,7 +181,7 @@
 }
 
 .submit-btn:disabled {
-  background: var(--mid-gray);
+  background: var(--border-default);
   color: var(--text-muted);
   cursor: not-allowed;
   box-shadow: none;
@@ -194,7 +194,7 @@
 .link-btn {
   background: transparent;
   border: none;
-  color: var(--green-mid);
+  color: var(--action);
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 500;
@@ -204,7 +204,7 @@
 }
 
 .link-btn:hover {
-  color: var(--green-dark);
+  color: var(--action-hover);
   text-decoration: underline;
 }
 
