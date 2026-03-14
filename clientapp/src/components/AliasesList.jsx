@@ -58,6 +58,7 @@ function AliasesList() {
   const [error, setError] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [refreshing, setRefreshing] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(null)
 
   useEffect(() => {
     fetchAliases()
@@ -74,6 +75,31 @@ function AliasesList() {
     } finally {
       setLoading(false)
       setRefreshing(false)
+    }
+  }
+
+  const copyToClipboard = async (email, emailId) => {
+    try {
+      await navigator.clipboard.writeText(email)
+      setCopiedEmail(emailId)
+      // Clear the copied state after 2 seconds
+      setTimeout(() => setCopiedEmail(null), 2000)
+    } catch (err) {
+      // Fallback for older browsers
+      const textArea = document.createElement('textarea')
+      textArea.value = email
+      textArea.style.position = 'fixed'
+      textArea.style.opacity = '0'
+      document.body.appendChild(textArea)
+      textArea.select()
+      try {
+        document.execCommand('copy')
+        setCopiedEmail(emailId)
+        setTimeout(() => setCopiedEmail(null), 2000)
+      } catch (fallbackErr) {
+        console.error('Failed to copy email:', fallbackErr)
+      }
+      document.body.removeChild(textArea)
     }
   }
 
@@ -151,22 +177,39 @@ function AliasesList() {
         <div className="aliases-list">
           {filteredAliases.map((alias) => (
             <div key={alias.id} className="alias-item">
-              <div className="alias-email">
+              <div 
+                className="alias-email clickable-email"
+                onClick={() => copyToClipboard(alias.alias, `alias-${alias.id}`)}
+              >
                 <div className="alias-icon">
                   <MailIcon />
                 </div>
                 <span className="alias-text">{alias.alias}</span>
+                {copiedEmail === `alias-${alias.id}` && (
+                  <span className="copy-feedback">Copied!</span>
+                )}
               </div>
 
               {alias.forwardings && alias.forwardings.length > 0 && (
                 <div className="alias-forwardings">
                   <div className="forwardings-label">Forwards to</div>
-                  {alias.forwardings.map((forwarding, index) => (
-                    <div key={index} className="forwarding-item">
-                      <ForwardIcon />
-                      <span>{forwarding.forwardTo || forwarding}</span>
-                    </div>
-                  ))}
+                  {alias.forwardings.map((forwarding, index) => {
+                    const forwardingEmail = forwarding.forwardTo || forwarding
+                    const forwardingId = `forwarding-${alias.id}-${index}`
+                    return (
+                      <div 
+                        key={index} 
+                        className="forwarding-item clickable-email"
+                        onClick={() => copyToClipboard(forwardingEmail, forwardingId)}
+                      >
+                        <ForwardIcon />
+                        <span>{forwardingEmail}</span>
+                        {copiedEmail === forwardingId && (
+                          <span className="copy-feedback">Copied!</span>
+                        )}
+                      </div>
+                    )
+                  })}
                 </div>
               )}
             </div>
