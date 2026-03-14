@@ -101,13 +101,97 @@ clientapp/.vite/
 *.sqlite3
 *.db
 
-# Environment files
+# Environment files and secrets
 .env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+.env.production
+.env.development
+env.list
+*.env
+*.env.local
+
+# Configuration files with secrets
 appsettings.*.json
+!appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.*.local.json
+
+# API Keys, Tokens, and Credentials
+*apikey*
+*api-key*
+*api_key*
+*secret*
+*secrets*
+*credential*
+*credentials*
+*password*
+*passwd*
+*token*
+*tokens*
+*key*
+*.key
+*.pem
+*.p12
+*.pfx
+*.jks
+*.keystore
+devtoken.txt
+*.token
+
+# SSH Keys
+*.pem
+id_rsa
+id_ed25519
+id_ecdsa
+*.pub
+!*.pub.pub
+known_hosts
+.ssh/
+
+# SSL/TLS Certificates
+*.crt
+*.cer
+*.cert
+*.p7b
+*.p7c
+*.p12
+*.pfx
+*.pem
+*.key
+ssl/
+certs/
+certificates/
+nginx/ssl/
+
+# Docker secrets
+docker-compose.override.yml
+docker-compose.*.yml
+!docker-compose.yml
+secrets/
+*.secret
+
+# CI/CD secrets
+.github/secrets/
+.gitlab/secrets/
+*.secret.yml
+*.secret.yaml
+
+# Database connection strings and backups
+*.bak
+*.backup
+*.sql
+!Migrations/*.sql
+connectionstrings.json
+dbconfig.json
+
+# User secrets (ASP.NET Core)
+Properties/launchSettings.json
 
 # Build results
 [Dd]ebug/
@@ -129,11 +213,15 @@ bld/
 *.userosscache
 *.sln.docstates
 
-#project files
+# Project specific files
 Scraper/tmp/mail_data.json
+Scraper/.env
+Scraper/credentials.json
 tmp/
 
-#dev token
-devtoken.txt
-env.list
-docker-compose.yaml
+# Additional sensitive files
+*.private
+*.confidential
+config.local.*
+settings.local.*
+*.local
