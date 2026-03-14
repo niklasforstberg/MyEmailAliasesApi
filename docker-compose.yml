@@ -15,6 +15,7 @@ services:
       - Jwt__Audience=https://email.forstberg.net
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
       - ALLOWED_ORIGINS=https://email.forstberg.net
+      - FRONTEND_URL=https://email.forstberg.net
       - smtp__username=${SMTP_USERNAME}
       - smtp__password=${SMTP_PASSWORD}
       - smtp__server=${SMTP_SERVER}
