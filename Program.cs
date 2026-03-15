@@ -12,6 +12,8 @@ using System.Security.Claims;
 using EmailAliasApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 
+using System.Threading.RateLimiting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Configure forwarded headers for Cloudflare/Caddy reverse proxy
@@ -39,41 +41,41 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddSwaggerGen(c =>
+if (builder.Environment.IsDevelopment())
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmailAlias API", Version = "v1" });
-
-    // Add JWT Authentication
-    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen(c =>
     {
-        Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer"
-    });
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "EmailAlias API", Version = "v1" });
 
-    c.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
+            Description = "JWT Authorization header using the Bearer scheme. Enter 'Bearer' [space] and then your token in the text input below.",
+            Name = "Authorization",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+
+        c.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
             {
-                Reference = new OpenApiReference
+                new OpenApiSecurityScheme
                 {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    },
+                    Scheme = "http",
+                    Name = "Bearer",
+                    In = ParameterLocation.Header
                 },
-                Scheme = "http",
-                Name = "Bearer",
-                In = ParameterLocation.Header
-            },
-            new string[] {}
-        }
+                new string[] {}
+            }
+        });
     });
-});
+}
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
@@ -89,20 +91,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? string.Empty))
         };
 
-        // Add this section for detailed error messages
-        options.Events = new JwtBearerEvents
-        {
-            OnChallenge = context =>
-            {
-                context.HandleResponse();
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                context.Response.ContentType = "application/json";
-
-                // Only use this for debugging. Remove in production!
-                var result = JsonSerializer.Serialize("401 Error: " + context.Error + " - " + context.ErrorDescription);
-                return context.Response.WriteAsync(result);
-            }
-        };
     });
 
 builder.Services.AddAuthorization(options =>
@@ -115,30 +103,50 @@ builder.Services.AddAuthorization(options =>
 builder.Services.AddDbContext<EmailAliasDbContext>(options =>
 {
     var connectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
-    Console.WriteLine("Connection string: " + connectionString);
     options.UseSqlServer(connectionString);
 });
 
 // Add Email Service
 builder.Services.AddScoped<EmailService>();
 
+// Rate limiting — auth endpoints
+builder.Services.AddRateLimiter(options =>
+{
+    options.AddPolicy("auth", httpContext =>
+        RateLimitPartition.GetSlidingWindowLimiter(
+            partitionKey: httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+            factory: _ => new SlidingWindowRateLimiterOptions
+            {
+                PermitLimit = 10,
+                Window = TimeSpan.FromMinutes(1),
+                SegmentsPerWindow = 2,
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 0
+            }));
+    options.RejectionStatusCode = 429;
+});
+
 var app = builder.Build();
 
 // Use forwarded headers (must be first)
 app.UseForwardedHeaders();
 
+app.UseRateLimiter();
+
 // Configure the HTTP request pipeline.
-app.UseSwagger(c =>
+if (app.Environment.IsDevelopment())
 {
-    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+    app.UseSwagger(c =>
     {
-        // Detect protocol from forwarded headers (Cloudflare provides HTTPS)
-        var scheme = httpReq.Scheme;
-        var host = httpReq.Host.Value;
-        swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{scheme}://{host}" } };
+        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+        {
+            var scheme = httpReq.Scheme;
+            var host = httpReq.Host.Value;
+            swaggerDoc.Servers = new List<OpenApiServer> { new OpenApiServer { Url = $"{scheme}://{host}" } };
+        });
     });
-});
-app.UseSwaggerUI();
+    app.UseSwaggerUI();
+}
 
 // Enable CORS
 app.UseCors("AllowLocalhost");
