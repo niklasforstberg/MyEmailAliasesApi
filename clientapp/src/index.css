@@ -1,41 +1,41 @@
 /* ========================================
-   PEACH DESIGN SYSTEM
-   Warm Rose & Bordeaux Palette
+   BALTIC DESIGN SYSTEM
+   Cool Steel & Ocean Blue Palette
    ======================================== */
 
 :root {
-  /* Peach Palette — raw named colors, source of truth */
-  --soft-apricot: #f9dbbd;
-  --cotton-candy: #ffa5ab;
-  --blush-rose: #da627d;
-  --berry-crush: #a53860;
-  --night-bordeaux: #450920;
+  /* Baltic Palette — raw named colors, source of truth */
+  --alice-blue: #dbe9ee;
+  --pale-sky: #c0d6df;
+  --blue-slate: #4f6d7a;
+  --smart-blue: #4a6fa5;
+  --baltic-blue: #166088;
 
   /* Surfaces — where content sits */
-  --surface-page: #fef7f1;          /* warm off-white page background */
-  --surface-subtle: #fceade;        /* disabled inputs, empty state fills */
-  --surface-inverse: var(--night-bordeaux);    /* dark panels: header, cards */
-  --surface-inverse-mid: #6b1535;   /* lighter dark, used as gradient pair */
+  --surface-page: #f0f6f9;          /* cool off-white page background */
+  --surface-subtle: #dbe9ee;        /* disabled inputs, empty state fills */
+  --surface-inverse: var(--baltic-blue);    /* dark panels: header, cards */
+  --surface-inverse-mid: #1e7aaa;   /* lighter dark, used as gradient pair */
 
   /* Borders */
-  --border-subtle: #f0d5c0;         /* default input & card outlines */
-  --border-default: #dbbda8;        /* hover borders, dividers */
+  --border-subtle: #bdd4de;         /* default input & card outlines */
+  --border-default: #9ab8c7;        /* hover borders, dividers */
 
   /* Text */
   --white: #ffffff;
-  --text-primary: #1a0810;
-  --text-secondary: #4a2535;
-  --text-muted: #8a6070;
+  --text-primary: #0d2230;
+  --text-secondary: #1e3d52;
+  --text-muted: #5a7d8f;
 
   /* Actions — buttons, links, focus rings */
-  --action: var(--blush-rose);
-  --action-hover: var(--berry-crush);
-  --action-light: var(--cotton-candy);
+  --action: var(--smart-blue);
+  --action-hover: var(--baltic-blue);
+  --action-light: var(--pale-sky);
 
   /* Accents — decorative icons on dark surfaces */
-  --accent: var(--berry-crush);
-  --accent-mid: #c0496e;
-  --accent-light: var(--blush-rose);
+  --accent: var(--smart-blue);
+  --accent-mid: #3a5f8f;
+  --accent-light: var(--blue-slate);
 
   /* Functional */
   --error-red: #c0392b;
@@ -51,7 +51,7 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --shadow-panel: 0 4px 20px rgba(69, 9, 32, 0.15);
+  --shadow-panel: 0 4px 20px rgba(22, 96, 136, 0.15);
 
   /* Transitions */
   --transition-fast: 0.15s ease;
@@ -234,7 +234,7 @@ a:hover {
 .input:focus {
   outline: none;
   border-color: var(--action);
-  box-shadow: 0 0 0 3px rgba(218, 98, 125, 0.15);
+  box-shadow: 0 0 0 3px rgba(74, 111, 165, 0.2);
 }
 
 .input:disabled {

@@ -1,5 +1,5 @@
 /* ========================================
-   APP LAYOUT - PEACH
+   APP LAYOUT - BALTIC
    ======================================== */
 
 .app {
@@ -111,8 +111,8 @@
 }
 
 .logout-btn:hover {
-  background: rgba(192, 57, 43, 0.9);
-  border-color: rgba(192, 57, 43, 1);
+  background: rgba(22, 96, 136, 0.9);
+  border-color: rgba(22, 96, 136, 1);
 }
 
 .logout-btn svg {
