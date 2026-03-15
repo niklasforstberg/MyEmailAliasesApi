@@ -8,6 +8,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.Channels;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -53,36 +54,25 @@ public static class AuthEndpoints
             return Results.Ok(new { Token = token });
         });
 
-        group.MapPost("/forgot-password", async (ForgotPasswordRequest request, EmailAliasDbContext db, EmailService emailService, IConfiguration config) =>
+        group.MapPost("/forgot-password", async (ForgotPasswordRequest request, EmailAliasDbContext db, Channel<EmailJob> emailChannel, IConfiguration config) =>
         {
             var user = await db.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
 
-            // Don't reveal if email exists (security best practice)
             if (user != null)
             {
-                // Generate secure reset token
                 var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
                 user.ResetToken = HashResetToken(resetToken);
                 user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
 
                 await db.SaveChangesAsync();
 
-                // Build reset URL
                 var frontendUrl = config["FRONTEND_URL"] ?? "http://localhost:5173";
                 var resetUrl = $"{frontendUrl}/reset-password?token={Uri.EscapeDataString(resetToken)}";
 
-                try
-                {
-                    await emailService.SendPasswordResetEmail(user.Email, resetToken, resetUrl);
-                }
-                catch (Exception)
-                {
-                    // Log error but don't reveal failure to user
-                    // Token is already saved, so user can try again later
-                }
+                await emailChannel.Writer.WriteAsync(new EmailJob(user.Email, resetToken, resetUrl));
             }
 
-            // Always return success to prevent email enumeration
+            // Return immediately — email is sent in background regardless of whether user exists
             return Results.Ok(new { Message = "If an account with that email exists, a password reset link has been sent." });
         });
 

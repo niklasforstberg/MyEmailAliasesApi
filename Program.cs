@@ -12,6 +12,7 @@ using System.Security.Claims;
 using EmailAliasApi.Models;
 using Microsoft.AspNetCore.HttpOverrides;
 
+using System.Threading.Channels;
 using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -108,6 +109,14 @@ builder.Services.AddDbContext<EmailAliasDbContext>(options =>
 
 // Add Email Service
 builder.Services.AddScoped<EmailService>();
+
+// Email dispatch channel — decouples HTTP response from email sending (timing-oracle fix)
+builder.Services.AddSingleton(Channel.CreateBounded<EmailJob>(new BoundedChannelOptions(50)
+{
+    FullMode = BoundedChannelFullMode.DropOldest,
+    SingleReader = true
+}));
+builder.Services.AddHostedService<EmailDispatchService>();
 
 // Rate limiting — auth endpoints
 builder.Services.AddRateLimiter(options =>
