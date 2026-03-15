@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.Channels;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -19,7 +20,25 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/auth").RequireRateLimiting("auth");
+        var group = app.MapGroup("/api/auth")
+            .RequireRateLimiting("auth")
+            .AddEndpointFilter(async (context, next) =>
+            {
+                foreach (var arg in context.Arguments)
+                {
+                    if (arg is null) continue;
+                    var validationContext = new ValidationContext(arg);
+                    var results = new List<ValidationResult>();
+                    if (!Validator.TryValidateObject(arg, validationContext, results, validateAllProperties: true))
+                    {
+                        return Results.ValidationProblem(results.ToDictionary(
+                            r => r.MemberNames.FirstOrDefault() ?? string.Empty,
+                            r => new[] { r.ErrorMessage ?? "Invalid value" }
+                        ));
+                    }
+                }
+                return await next(context);
+            });
 
         group.MapPost("/register", async (RegisterRequest request, EmailAliasDbContext db) =>
         {

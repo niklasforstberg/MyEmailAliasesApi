@@ -9,7 +9,8 @@
       "Bash(jq:*)",
       "Bash(/usr/local/bin/jq:*)",
       "Bash(dotnet restore:*)",
-      "Bash(dotnet --version:*)"
+      "Bash(dotnet --version:*)",
+      "Bash(gh issue:*)"
     ]
   },
   "outputStyle": "Explanatory"
