@@ -31,4 +31,5 @@ COPY --from=build /app/publish .
 COPY --from=build /src/wwwroot ./wwwroot
 EXPOSE 80
 EXPOSE 443
+USER app
 ENTRYPOINT ["dotnet", "MyEmailAliasesApi.dll"]
