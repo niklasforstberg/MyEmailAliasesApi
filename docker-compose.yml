@@ -16,6 +16,7 @@ services:
       - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
       - ALLOWED_ORIGINS=https://email.forstberg.net
       - FRONTEND_URL=https://email.forstberg.net
+      - TRUSTED_PROXY_IPS=${TRUSTED_PROXY_IPS:-172.18.0.1}
       - smtp__username=${SMTP_USERNAME}
       - smtp__password=${SMTP_PASSWORD}
       - smtp__server=${SMTP_SERVER}

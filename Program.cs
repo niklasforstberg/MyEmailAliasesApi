@@ -20,12 +20,18 @@ var builder = WebApplication.CreateBuilder(args);
 // Configure forwarded headers for Cloudflare/Caddy reverse proxy
 builder.Services.Configure<ForwardedHeadersOptions>(options =>
 {
-    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor | 
+    options.ForwardedHeaders = Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedFor |
                                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedProto |
                                Microsoft.AspNetCore.HttpOverrides.ForwardedHeaders.XForwardedHost;
-    // Trust all proxies (Cloudflare and Caddy)
-    options.KnownNetworks.Clear();
-    options.KnownProxies.Clear();
+
+    // Trust only explicitly configured proxy IPs (Caddy / Docker bridge gateway).
+    // Set TRUSTED_PROXY_IPS in the environment — comma-separated IPv4/IPv6 addresses.
+    var trustedProxies = builder.Configuration["TRUSTED_PROXY_IPS"] ?? "";
+    foreach (var entry in trustedProxies.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+    {
+        if (System.Net.IPAddress.TryParse(entry, out var ip))
+            options.KnownProxies.Add(ip);
+    }
 });
 
 // Add CORS service
