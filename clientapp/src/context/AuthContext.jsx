@@ -11,19 +11,12 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     const token = localStorage.getItem('token')
     if (token) {
-      // Verify token by fetching user info
-      console.log('Verifying token')
-      console.log(token)
       api.get('/auth/me')
         .then(response => {
-          console.log('Token verified')
-          console.log(response.data)
           setUser(response.data)
           setIsAuthenticated(true)
         })
         .catch(() => {
-          // Token is invalid, remove it
-          console.log('Token invalid')
           localStorage.removeItem('token')
           setIsAuthenticated(false)
         })

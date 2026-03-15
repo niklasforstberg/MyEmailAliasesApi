@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Microsoft.AspNetCore.RateLimiting;
 using System.Text;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ public static class AuthEndpoints
 {
     public static void MapAuthEndpoints(this IEndpointRouteBuilder app)
     {
-        var group = app.MapGroup("/api/auth");
+        var group = app.MapGroup("/api/auth").RequireRateLimiting("auth");
 
         group.MapPost("/register", async (RegisterRequest request, EmailAliasDbContext db) =>
         {
@@ -30,7 +31,7 @@ public static class AuthEndpoints
             {
                 Email = request.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.Password),
-                Username = request.Email, // Using email as username by default
+                Username = request.Email,
                 Role = User.UserRole.USER
             };
 
@@ -38,7 +39,7 @@ public static class AuthEndpoints
             await db.SaveChangesAsync();
 
             return Results.Ok("User registered successfully");
-        });
+        }).RequireAuthorization("AdminOnly");
 
         group.MapPost("/login", async (LoginRequest request, EmailAliasDbContext db, IConfiguration config) =>
         {
@@ -61,7 +62,7 @@ public static class AuthEndpoints
             {
                 // Generate secure reset token
                 var resetToken = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
-                user.ResetToken = resetToken;
+                user.ResetToken = HashResetToken(resetToken);
                 user.ResetTokenExpiry = DateTime.UtcNow.AddHours(1);
 
                 await db.SaveChangesAsync();
@@ -87,8 +88,9 @@ public static class AuthEndpoints
 
         group.MapPost("/reset-password", async (ResetPasswordRequest request, EmailAliasDbContext db) =>
         {
+            var tokenHash = HashResetToken(request.Token);
             var user = await db.Users.FirstOrDefaultAsync(u =>
-                u.ResetToken == request.Token &&
+                u.ResetToken == tokenHash &&
                 u.ResetTokenExpiry.HasValue &&
                 u.ResetTokenExpiry.Value > DateTime.UtcNow);
 
@@ -192,6 +194,9 @@ public static class AuthEndpoints
         }).RequireAuthorization();
     }
 
+    private static string HashResetToken(string token) =>
+        Convert.ToHexString(SHA256.HashData(Convert.FromBase64String(token))).ToLowerInvariant();
+
     private static string GenerateDevJwtToken(User user, IConfiguration config)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
@@ -209,7 +214,7 @@ public static class AuthEndpoints
             issuer: config["Jwt:Issuer"],
             audience: config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddYears(1), // 1 year expiration for development
+            expires: DateTime.UtcNow.AddYears(1), // 1 year expiration for development
             signingCredentials: credentials
         );
 
@@ -233,7 +238,7 @@ public static class AuthEndpoints
             issuer: config["Jwt:Issuer"],
             audience: config["Jwt:Audience"],
             claims: claims,
-            expires: DateTime.Now.AddDays(1),
+            expires: DateTime.UtcNow.AddDays(1),
             signingCredentials: credentials
         );
 
